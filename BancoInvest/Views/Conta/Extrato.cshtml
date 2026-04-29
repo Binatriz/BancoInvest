@@ -1,0 +1,219 @@
+﻿@model List<BancoInvest.Models.Transacao>
+
+@using BancoInvest.Models
+
+@{
+    ViewData["Title"] = "Extrato";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<style>
+    body {
+        background: radial-gradient(circle at top, #002d25, #000);
+        color: white;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .app-container {
+        max-width: 90%;
+        margin: 30px auto;
+        background: #0f0f0f;
+        border-radius: 25px;
+        overflow: hidden;
+        box-shadow: 0 0 40px rgba(0,255,156,0.15);
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .topo {
+        background: linear-gradient(180deg, #00ff9c, #007a5a);
+        padding: 20px;
+        border-radius: 0 0 25px 25px;
+        box-shadow: 0 0 20px rgba(0,255,156,0.3);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .titulo {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .btn-voltar {
+        background: transparent;
+        border: 1px solid #00ff9c;
+        color: #00ff9c;
+        padding: 6px 12px;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+        .btn-voltar:hover {
+            background: #00ff9c;
+            color: black;
+        }
+
+    .card-extrato {
+        background: #121212;
+        border-radius: 15px;
+        padding: 15px;
+        margin-top: 15px;
+        box-shadow: 0 0 10px rgba(0,255,156,0.08);
+        border-left: 4px solid #00ff9c;
+    }
+
+    .valor-positivo {
+        color: #00ff9c;
+        font-weight: bold;
+    }
+
+    .valor-negativo {
+        color: #ff4d4d;
+        font-weight: bold;
+    }
+
+    .tipo {
+        font-size: 14px;
+        opacity: 0.9;
+        font-weight: bold;
+    }
+
+    .data {
+        font-size: 12px;
+        opacity: 0.6;
+        margin-top: 4px;
+    }
+
+    .descricao {
+        margin-top: 6px;
+        font-size: 13px;
+        opacity: 0.8;
+    }
+
+    .empty {
+        text-align: center;
+        margin-top: 30px;
+        opacity: 0.7;
+    }
+</style>
+
+<div class="app-container">
+
+    <!-- TOPO -->
+    <div class="topo">
+        <div class="titulo">📄 Extrato</div>
+        <a href="/Conta/Index" class="btn-voltar">Voltar</a>
+    </div>
+
+    <div class="content">
+
+        @if (!Model.Any())
+        {
+            <div class="empty">
+                Nenhuma transação encontrada.
+            </div>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                var positivo =
+                    item.Tipo == TipoTransacao.Deposito ||
+                    item.Tipo == TipoTransacao.Emprestimo ||
+                    item.Tipo == TipoTransacao.TransferenciaRecebida;
+
+                var icone = item.Tipo switch
+                {
+                    TipoTransacao.Deposito => "💰",
+                    TipoTransacao.Saque => "🏧",
+                    TipoTransacao.TransferenciaEnviada => "🔁",
+                    TipoTransacao.TransferenciaRecebida => "🔁",
+                    TipoTransacao.Emprestimo => "💳",
+                    TipoTransacao.Cambio => "💱",
+                    TipoTransacao.Taxa => "📉",
+                    _ => "📄"
+                };
+
+                <div class="card-extrato">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="tipo">
+                            @icone @item.Tipo
+                        </div>
+
+                        @* 👉 TRATAMENTO ESPECIAL PARA CÂMBIO *@
+                        @if (item.Tipo == TipoTransacao.Cambio && item.Cambio != null)
+                        {
+                            <div class="valor-positivo">
+                                💱 Conversão
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="@(positivo ? "valor-positivo" : "valor-negativo")">
+                                @(positivo ? "+" : "-") R$ @item.Valor.ToString("N2")
+                            </div>
+                        }
+                    </div>
+
+                    <div class="data">
+                        @item.DataHora.ToString("dd/MM/yyyy HH:mm")
+                    </div>
+
+                    <div class="descricao">
+
+                        @if (item.Tipo == TipoTransacao.Cambio && item.Cambio != null)
+                        {
+                            <div class="card-extrato">
+
+                                <div class="tipo">
+                                    💱 BRL → @item.Cambio.MoedaDestino
+                                </div>
+
+                                <div class="descricao">
+                                    R$ @item.Cambio.ValorOrigem.ToString("N2")
+                                    →
+                                    <span class="destaque">
+                                        @item.Cambio.ValorConvertido.ToString("N2") @item.Cambio.MoedaDestino
+                                    </span>
+                                </div>
+
+                                <div class="data">
+                                    📅 @item.DataHora.ToString("dd/MM/yyyy HH:mm")
+                                </div>
+
+                            </div>
+                        }
+
+                        else if (item.Tipo == TipoTransacao.TransferenciaEnviada)
+                        {
+                            <div>
+                                Transferência para @(item.ContaDestino?.Usuario?.NomeCompleto ?? item.ContaDestinoId.ToString())
+                            </div>
+                        }
+                        else if (item.Tipo == TipoTransacao.TransferenciaRecebida)
+                        {
+                            <div>
+                                Recebido de @(item.ContaOrigem?.Usuario?.NomeCompleto ?? item.ContaOrigemId.ToString())
+                            </div>
+                        }
+                        else if (!string.IsNullOrEmpty(item.Descricao))
+                        {
+                            <div>
+                                @item.Descricao
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+            }
+        }
+
+    </div>
+</div>

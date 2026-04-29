@@ -1,0 +1,13 @@
+﻿@model BancoInvest.Models.Conta
+
+<h2>💳 Meus Cartões</h2>
+
+@foreach (var cartao in Model.Cartoes)
+{
+    <div class="card p-3 mb-2">
+        <h4>@cartao.TipoCartao?.Nome</h4>
+        <p>Final: **** @cartao.FinalCartao</p>
+        <p>Limite: R$ @cartao.LimiteDisponivel</p>
+        <p>Status: @(cartao.Ativo ? "Ativo" : "Bloqueado")</p>
+    </div>
+}

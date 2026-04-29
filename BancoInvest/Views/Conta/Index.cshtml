@@ -1,0 +1,589 @@
+﻿@model BancoInvest.Models.Conta
+
+@{
+    ViewData["Title"] = "Conta";
+    var cartaoCredito = Model.Cartoes?.FirstOrDefault(c => c.TipoCartao?.Nome == "Crédito");
+    var cartaoDebito = Model.Cartoes?.FirstOrDefault(c => c.TipoCartao?.Nome == "Débito");
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<style>
+    body {
+        background: radial-gradient(circle at top, #002d25, #000);
+        color: white;
+        font-family: 'Segoe UI', sans-serif;
+        overflow-y: auto; 
+    }
+
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+         display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+ 
+    .app-container {
+        width: 100%;
+        margin: 30px auto;
+        background: #0f0f0f;
+        border-radius: 25px;
+        box-shadow: 0 0 40px rgba(0,255,156,0.15);
+        min-height: 100vh;
+    }
+
+    .content {
+        max-width: 90%;
+        max-height: 90%;
+        margin: auto;
+        padding: 15px;
+    }
+
+    .topo {
+        background: linear-gradient(180deg, #00ff9c, #007a5a);
+        padding: 25px;
+        border-radius: 0 0 25px 25px;
+        box-shadow: 0 0 20px rgba(0,255,156,0.3);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #00ff88;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: black;
+        font-weight: bold;
+    }
+
+    .moeda-box {
+        background: #1a1a1a;
+        border-radius: 12px;
+        transition: 0.2s;
+        box-shadow: 0 0 8px rgba(0,255,156,0.05);
+    }
+
+    .moeda-box:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0 12px rgba(0,255,156,0.2);
+    }
+
+    .saldo {
+        font-size: 26px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .card-banco {
+        background: #121212;
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 20px;
+        margin: 15px;
+        box-shadow: 0 0 10px rgba(0,255,156,0.1);
+    }
+
+    .acao-card {
+        background: #121212;
+        height: 100px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.2s;
+        box-shadow: 0 0 10px rgba(0,255,156,0.1);
+        font-size: 22px;
+    }
+
+    .acao-card p {
+        font-size: 12px;
+        margin-top: 8px;
+    }
+
+    .acao-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px #00ff9c;
+    }
+
+    .btn-acao {
+        background: linear-gradient(90deg, #00ff9c, #00c97a);
+        color: black;
+        font-weight: bold;
+        border: none;
+    }
+
+    .form-control {
+        background: transparent;
+        border: 1px solid #00ff9c;
+        color: white;
+    }
+
+    .modal-content {
+        border: 1px solid #00ff9c;
+        box-shadow: 0 0 20px #00ff9c33;
+    }
+
+    .btn-editar {
+        border: 1px solid #00ff9c;
+        background: white;
+        color: black;
+        padding: 6px 10px;
+        border-radius: 10px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+    .lapis {
+        display: inline-block; 
+        transform: rotate(90deg); 
+    }
+
+    .btn-editar:hover {
+        background: #00ff9c;
+        color: black;
+        box-shadow: 0 0 10px #00ff9c;
+        transform: scale(1.05);
+    }
+
+    .btn-sair {
+        border: 1px solid #00ff9c;
+        color: black;
+        padding: 6px 14px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: 0.2s;
+        background: white;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-sair:hover {
+        background: #00ff9c;
+        color: black;
+        box-shadow: 0 0 10px #00ff9c;
+        transform: scale(1.05);
+    }
+
+    .cartao-visual {
+        background: linear-gradient(135deg, #1a1a1a, #2b2b2b);
+        border-radius: 20px;
+        padding: 20px;
+        color: white;
+        box-shadow: 0 0 20px rgba(0,255,156,0.2);
+        position: relative;
+        overflow: hidden;
+        max-width: 320px;   
+        width: 100%;
+    }
+
+    .cartao-numero {
+        letter-spacing: 3px;
+        font-size: 18px;
+        margin-top: 20px;
+    }
+
+    .cartao-info {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        font-size: 14px;
+    }
+
+    .cartao-bandeira {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .cartao-chip {
+        width: 40px;
+        height: 30px;
+        background: gold;
+        border-radius: 6px;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="app-container">
+    <div class="content">
+    <!-- TOPO -->
+    <div class="topo d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-2">
+            <div class="avatar">👤</div>
+            <div>
+                <small>Bem-vindo</small><br />
+                <div class="d-flex align-items-center gap-2">
+                    <strong>@Model.Usuario?.NomeCompleto</strong>
+
+                        <button class="btn-editar"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editarNomeModal">
+                            <span class="lapis">✎</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/Auth/Logout" class="btn-sair">
+                    SAIR
+                </a>
+            </div>
+    </div>
+
+    <!-- MOEDAS -->
+    <div class="card-banco">
+        <h5>💱 Moedas</h5>
+
+        <div class="row text-center mt-3 g-3">
+
+            <div class="col-6">
+                <div class="p-2 moeda-box">
+                    <small>🇧🇷 BRL</small>
+                    <div><strong>R$ @Model.SaldoBRL.ToString("N2")</strong></div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="p-2 moeda-box">
+                    <small>🇺🇸 USD</small>
+                    <div><strong>$ @Model.SaldoUSD.ToString("N2")</strong></div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="p-2 moeda-box">
+                    <small>🇪🇺 EUR</small>
+                    <div><strong>€ @Model.SaldoEUR.ToString("N2")</strong></div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="p-2 moeda-box">
+                    <small>🇬🇧 GBP</small>
+                    <div><strong>£ @Model.SaldoGBP.ToString("N2")</strong></div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="p-2 moeda-box">
+                    <small>🇯🇵 JPY</small>
+                    <div><strong>¥ @Model.SaldoJPY.ToString("N0")</strong></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row mt-4">
+
+    <!-- ESQUERDA - CARTÕES -->
+    <div class="col-lg-6">
+        <div class="card-banco h-100">
+            <h5>💳 Cartões</h5>
+
+            <div class="d-flex flex-wrap gap-2">
+
+                <!-- CARTÃO CRÉDITO -->
+                @if (cartaoCredito != null)
+                {
+                    <div class="d-flex gap-2 align-items-end">
+                        <div class="cartao-visual">
+                            <div class="cartao-bandeira">@cartaoCredito.Bandeira</div>
+                            <div class="cartao-chip"></div>
+
+                            <div class="cartao-numero">
+                                @string.Join(" ", Enumerable.Range(0, cartaoCredito.NumeroCartao.Length / 4)
+                                .Select(i => cartaoCredito.NumeroCartao.Substring(i * 4, 4)))
+                            </div>
+
+                            <div class="cartao-info">
+                                <div>
+                                    <small>Validade</small><br />
+                                    @cartaoCredito.Validade.ToString("MM/yy")
+                                </div>
+
+                                <div>
+                                    <small>Limite</small><br />
+                                    R$ @cartaoCredito.LimiteDisponivel.ToString("N2")
+                                </div>
+                            </div>
+
+                            <div class="mt-2 text-end">
+                                <small>Crédito</small>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#excluirCreditoModal">
+                            🗑
+                        </button>
+                    </div>
+                }
+
+                <!-- CARTÃO DÉBITO -->
+                @if (cartaoDebito != null)
+                {
+                    <div class="d-flex gap-2 align-items-end">
+                        <div class="cartao-visual">
+                            <div class="cartao-bandeira">@cartaoDebito.Bandeira</div>
+                            <div class="cartao-chip"></div>
+
+                            <div class="cartao-numero">
+                                @string.Join(" ", Enumerable.Range(0, cartaoDebito.NumeroCartao.Length / 4)
+                                .Select(i => cartaoDebito.NumeroCartao.Substring(i * 4, 4)))
+                            </div>
+
+                            <div class="cartao-info">
+                                <div>
+                                    <small>Validade</small><br />
+                                    @cartaoDebito.Validade.ToString("MM/yy")
+                                </div>
+                            </div>
+
+                            <div class="mt-2 text-end">
+                                <small>Débito</small>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#excluirDebitoModal">
+                            🗑
+                        </button>
+                    </div>
+                }
+            </div>
+
+            <!-- BOTÃO ADICIONAR -->
+            @if (cartaoCredito == null || cartaoDebito == null)
+            {
+                <button class="btn btn-acao mt-3 w-100"
+                        data-bs-toggle="modal"
+                        data-bs-target="#cartaoModal">
+                    + Solicitar Cartão
+                </button>
+            }
+        </div>
+    </div>
+
+
+    <!-- DIREITA - AÇÕES -->
+    <div class="col-lg-6">
+        <div class="card-banco h-100">
+
+            <h5>⚡ Ações</h5>
+
+            <div class="row text-center g-3 mt-2">
+
+                <div class="col-6">
+                    <div class="acao-card" data-bs-toggle="modal" data-bs-target="#depositoModal">
+                        💰<p>Depositar</p>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="acao-card" data-bs-toggle="modal" data-bs-target="#saqueModal">
+                        🏧<p>Sacar</p>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="acao-card" data-bs-toggle="modal" data-bs-target="#transferenciaModal">
+                        🔁<p>Transferir</p>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <a href="/Conta/Cambio" class="text-decoration-none">
+                        <div class="acao-card text-white">
+                            💱<p>Câmbio</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-6">
+                    <a href="/Conta/Emprestimo" class="text-decoration-none">
+                        <div class="acao-card text-white">
+                            💳<p>Empréstimo</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-6">
+                    <a href="/Conta/Extrato" class="text-decoration-none">
+                        <div class="acao-card text-white">
+                            📄<p>Extrato</p>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAIS -->
+
+<div class="modal fade" id="editarNomeModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white p-4">
+
+            <h5>Editar nome</h5>
+
+            <form method="post" action="/Conta/AtualizarNome">
+
+                <input name="primeiroNome"
+                       class="form-control mb-2"
+                       placeholder="Nome"
+                       required />
+
+                <input name="sobrenome"
+                       class="form-control mb-3"
+                       placeholder="Sobrenome"
+                       required />
+
+                <button class="btn btn-acao w-100">
+                    Salvar
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="depositoModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white p-4">
+            <h5>Depositar</h5>
+            <form method="post" action="/Conta/Depositar">
+                <input name="valor" class="form-control mb-2" placeholder="Valor" />
+                <button class="btn btn-acao w-100">Confirmar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="saqueModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white p-4">
+            <h5>Sacar</h5>
+            <form method="post" action="/Conta/Sacar">
+                <input name="valor" class="form-control mb-2" placeholder="Valor" />
+                <button class="btn btn-acao w-100">Confirmar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="transferenciaModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white p-4">
+            <h5>Transferência</h5>
+            <form method="post" action="/Conta/Transferir">
+                <input name="destinoInput" class="form-control mb-2" placeholder="Email ou número da conta" />
+                <input name="valor" class="form-control mb-2" placeholder="Valor" />
+                <button class="btn btn-acao w-100">Enviar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="cartaoModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white p-4">
+            <h5>Solicitar Cartão</h5>
+            <form method="post" action="/Conta/AdicionarCartao">
+                <!-- TIPO -->
+                <label>Tipo de cartão</label>
+                <select name="tipoCartaoId" class="form-control mb-3">
+                    <option value="1">Crédito</option>
+                    <option value="2">Débito</option>
+                </select>
+                <!-- BANDEIRA -->
+                <label>Escolha a bandeira</label>
+                <div class="d-flex gap-2 mt-2">
+                    <button type="submit" name="bandeira" value="Visa" class="btn btn-acao w-100">
+                        💳 Visa
+                    </button>
+                    <button type="submit" name="bandeira" value="Mastercard" class="btn btn-acao w-100">
+                        💳 Mastercard
+                    </button>
+                    <button type="submit" name="bandeira" value="Elo" class="btn btn-acao w-100">
+                        💳 Elo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="excluirCreditoModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white p-4">
+
+            <h5>Excluir cartão de crédito</h5>
+            <p>Tem certeza que deseja excluir este cartão?</p>
+
+            <form method="post" action="/Conta/ExcluirCartao">
+                <input type="hidden" name="cartaoId" value="@cartaoCredito?.Id" />
+
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-secondary w-50" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn btn-danger w-50">
+                        Excluir
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="excluirDebitoModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white p-4">
+
+            <h5>Excluir cartão de débito</h5>
+            <p>Tem certeza que deseja excluir este cartão?</p>
+
+            <form method="post" action="/Conta/ExcluirCartao">
+                <input type="hidden" name="cartaoId" value="@cartaoDebito?.Id" />
+
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-secondary w-50" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn btn-danger w-50">
+                        Excluir
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
