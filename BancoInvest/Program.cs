@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -14,7 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // 🔹 BANCO
 builder.Services.AddDbContext<BancoInvestContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("ConexaoPadrao"),
+        ServerVersion.AutoDetect(
+            builder.Configuration.GetConnectionString("ConexaoPadrao")
+        )));
 
 builder.Services.AddScoped<SeedService>();
 
@@ -64,17 +69,37 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
+        Title = "Banco Invest API",
+        Version = "v1"
+    });
+
+    // 🔐 CONFIG JWT NO SWAGGER
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",
         BearerFormat = "JWT",
-        Description = "JWT Authorization header using the Bearer scheme."
+        In = ParameterLocation.Header,
+        Description = "Digite: Bearer {seu_token}"
     });
-    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
-    {
-        [new OpenApiSecuritySchemeReference("bearer", document)] = []
-    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
+                });
 });
 
 var app = builder.Build();
