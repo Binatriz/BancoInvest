@@ -60,7 +60,7 @@ POST /api/AuthApi/login
 Body:
 {
   "email": "teste1@teste.com",
-  "password": "123456"
+  "password": "Admin@123"
 }
 
 Resposta:
@@ -83,11 +83,11 @@ Botão no topo direito.
 👤 Usuários para Teste
 Usuário 1
 Email: teste1@teste.com
-Senha: 123456
+Senha: Admin@123
 
 Usuário 2
 Email: teste2@teste.com
-Senha: 123456
+Senha: Admin@123
 
 🧪 Endpoints da API
 🔐 AUTH
@@ -97,7 +97,7 @@ Body:
 
 {
   "email": "teste1@teste.com",
-  "password": "123456"
+  "password": "Admin@123"
 }
 
 🏦 CONTA
@@ -138,8 +138,8 @@ R$ 2,50
 
 🔁 TRANSFERÊNCIA
 Pode transferir usando:
-email
-número da conta
+- email
+- número da conta
 POST /api/ContaApi/transferir
 Body:
 {
