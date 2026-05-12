@@ -203,12 +203,11 @@ Body:
 🧠 Regras de Negócio
 
 1. Saque
-taxa fixa de R$ 2,50
+- taxa fixa de R$ 2,50
 
-2. Transferência
-Não permite:
-saldo insuficiente
-transferência para si mesmo
+2. Transferência = Não permite:
+- saldo insuficiente
+- transferência para si mesmo
 
 3. Cartões (Só pode ter no máximo 1 cartão de crédito e 1 cartão de débito)
   
