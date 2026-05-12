@@ -28,50 +28,49 @@ O BancoInvest é uma aplicação bancária digital que permite:
 11. Swagger para testes da API
 
 Tecnologias Utilizadas:
-C#
-ASP.NET Core 8
-Entity Framework Core
-SQL Server
-Identity Framework
-JWT Bearer
-Swagger / Swashbuckle
-Bootstrap 5
-Razor Views
+- C#
+- ASP.NET Core 8
+- Entity Framework Core
+- SQL Server
+- Identity Framework
+- JWT Bearer
+- Swagger / Swashbuckle
+- Bootstrap 5
+- Razor Views
+  
 🔐 Autenticação JWT
-
 A API utiliza JWT Bearer Token.
 Após login:
 A API retorna um token
 O token deve ser enviado no Swagger
 Todas as rotas protegidas utilizam:
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-⚙️ Como Rodar o Projeto
 
+⚙️ Como Rodar o Projeto
 1. Executar projeto
 🌐 Swagger
-Swagger ficará disponível em:
+- Swagger ficará disponível em:
 https://localhost:7153/swagger
 
 🔑 Como Autenticar no Swagger
 1. Fazer Login
 Endpoint:
 POST /api/AuthApi/login
-
-Body:
+- Body:
 {
   "email": "teste1@teste.com",
   "password": "Admin@123"
 }
 
-Resposta:
+- Resposta:
 {
   "token": "SEU_TOKEN_AQUI"
 }
 
 2. Copiar apenas o token
-COPIE SOMENTE:
+- COPIE SOMENTE:
 eyJhbGciOi...
-NÃO copie:
+- NÃO copie:
 {
   "token": ""
 }
@@ -81,11 +80,11 @@ Botão no topo direito.
 
 
 👤 Usuários para Teste
-Usuário 1
+- Usuário 1:
 Email: teste1@teste.com
 Senha: Admin@123
 
-Usuário 2
+- Usuário 2:
 Email: teste2@teste.com
 Senha: Admin@123
 
@@ -93,8 +92,8 @@ Senha: Admin@123
 🔐 AUTH
 Login
 POST /api/AuthApi/login
-Body:
 
+- Body:
 {
   "email": "teste1@teste.com",
   "password": "Admin@123"
@@ -110,18 +109,20 @@ Retorna:
 - empréstimos
 - câmbios
 - usuário
-- Debug Usuário
-- 
-GET /api/ContaApi/debug-user
-Retorna:
+
+Debug Usuário
+- GET /api/ContaApi/debug-user
+- Retorna:
 {
   "userId": "...",
   "userName": "...",
   "email": "..."
 }
 
+
 💰 DEPÓSITO
 POST /api/ContaApi/depositar
+
 Body:
 {
   "valor": 500
@@ -129,6 +130,7 @@ Body:
 
 🏧 SAQUE
 POST /api/ContaApi/sacar
+
 Body:
 {
   "valor": 100
@@ -141,11 +143,13 @@ Pode transferir usando:
 - email
 - número da conta
 POST /api/ContaApi/transferir
+
 Body:
 {
   "destinoInput": "teste2@teste.com",
   "valor": 50
 }
+
 
 📄 EXTRATO
 GET /api/ContaApi/extrato
@@ -159,11 +163,13 @@ Retorna:
 💱 CÂMBIO
 Simulação
 POST /api/ContaApi/cambio
+
 Body:
 {
   "valor": 1000,
   "moeda": "USD"
 }
+
 Moedas:
 - USD
 - EUR
@@ -171,11 +177,12 @@ Moedas:
 - JPY
 
 💳 CARTÕES
-Listar cartões
+- Listar cartões
 Os cartões já retornam em:
 GET /api/ContaApi
 Adicionar cartão
 POST /api/ContaApi/cartao
+
 Body:
 {
   "tipoCartaoId": 1,
@@ -186,14 +193,16 @@ Tipos:
 1 = Crédito
 2 = Débito
 
-Excluir cartão
-DELETE /api/ContaApi/cartao/{id}
+
+Excluir cartão:
+- DELETE /api/ContaApi/cartao/{id}
 Exemplo:
-DELETE /api/ContaApi/cartao/1
+- DELETE /api/ContaApi/cartao/1
 
 💳 Empréstimos
 Simular empréstimo
 POST /api/ContaApi/emprestimo
+
 Body:
 {
   "valor": 5000,
