@@ -211,7 +211,9 @@ saldo insuficiente
 transferência para si mesmo
 
 3. Cartões (Só pode ter no máximo 1 cartão de crédito e 1 cartão de débito)
+  
 Cartão Crédito:
 - possui limite
+
 Cartão Débito:
 - não possui limite
